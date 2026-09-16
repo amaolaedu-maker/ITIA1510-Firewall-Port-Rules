@@ -27,7 +27,10 @@ def is_valid_port(port):
     """True when port is a real port number, 1 through 65535."""
     # TODO 1
     #   Return whether port is at least 1 and no more than 65535.
-    return False
+    if port >= 1 and port <= 65535:
+        return True
+    else: 
+        return False
 
 
 def port_range(port):
@@ -35,8 +38,19 @@ def port_range(port):
     # TODO 2
     #   Call is_valid_port first. When it says the port is not valid, return
     #   'invalid' -- do not repeat the 1 to 65535 test here.
-    #   Otherwise use if / elif / else on the ranges in the table above.
-    return "invalid"
+    #   Otherwise use if / elif / else on the ranges in the table above.\
+    is_valid = is_valid_port(port)
+    if is_valid == False:
+        return False
+    
+    if port >= 1 and port <= 1023:
+        return "well-known"
+    elif port >= 1024 and port <= 49151:
+        return "registered"
+    elif port >= 49151 and port <= 65535:
+        return "dynamic"
+    else:
+        return "invalid"
 
 
 def is_cleartext(port):
@@ -45,7 +59,10 @@ def is_cleartext(port):
     # TODO 3
     #   Compare port to each of the four numbers with == and join the
     #   comparisons with or. No lists this week.
-    return False
+    if port == 21 or port == 23 or port == 80 or port == 110:
+        return True
+    else: 
+        return False
 
 
 def rule_for(port):
@@ -56,7 +73,12 @@ def rule_for(port):
     #   ALLOW   everything else
     #   Build this out of the three functions above. It should not contain a
     #   single port number of its own.
-    return "BLOCK"
+    if is_valid_port(port) == False or is_cleartext(port) == True:
+        return "BLOCK"
+    elif port_range(port) == "dynamic":
+        return "REVIEW"
+    else:
+        return "ALLOW"
 
 
 allowed = 0
@@ -88,8 +110,13 @@ while True:
 
     # TODO 5
     #   Add 1 to allowed, review or blocked, whichever matches decision.
-
-    print()
+    if rule_for(port) == "ALLOW":
+        allowed =+ 1
+    if rule_for(port) == "REVIEW":
+        review =+ 1
+    if rule_for(port) == "BLOCK":
+        blocked =+ 1
+        print("Blocky")
 
 print("-" * 54)
 print("CHANGE REQUEST SUMMARY")
